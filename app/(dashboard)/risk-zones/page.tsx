@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { RiskMap } from "@/components/risk-map"
+import Image from "next/image"
+import { useState } from "react"
 
 export default function RiskZonesPage() {
   return (
@@ -11,6 +13,7 @@ export default function RiskZonesPage() {
         <p className="text-muted-foreground">View and manage high-risk areas for theft prevention</p>
       </div>
 
+      {/* 1) Existing RiskMap Card */}
       <Card>
         <CardHeader>
           <CardTitle>Risk Zone Map</CardTitle>
@@ -21,6 +24,7 @@ export default function RiskZonesPage() {
         </CardContent>
       </Card>
 
+      {/* 2) Existing Table of Known Risk Areas */}
       <Card>
         <CardHeader>
           <CardTitle>Known Risk Areas</CardTitle>
@@ -46,7 +50,11 @@ export default function RiskZonesPage() {
                   <TableCell>
                     <Badge
                       variant={
-                        zone.riskLevel === "Low" ? "outline" : zone.riskLevel === "Medium" ? "secondary" : "destructive"
+                        zone.riskLevel === "Low"
+                          ? "outline"
+                          : zone.riskLevel === "Medium"
+                          ? "secondary"
+                          : "destructive"
                       }
                     >
                       {zone.riskLevel}
@@ -61,10 +69,22 @@ export default function RiskZonesPage() {
           </Table>
         </CardContent>
       </Card>
+
+      {/* 3) NEW: Demo Risk Visualization below the table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Demo Risk Visualization</CardTitle>
+          <CardDescription>Random risk zones on a static map image</CardDescription>
+        </CardHeader>
+        <CardContent className="p-0 h-[400px]">
+          <RiskMapDemo />
+        </CardContent>
+      </Card>
     </div>
   )
 }
 
+/** Hardcoded known risk zones (unchanged) */
 const riskZones = [
   {
     id: "1",
@@ -113,3 +133,44 @@ const riskZones = [
   },
 ]
 
+/** 
+ * NEW: A simple "Demo RiskMap" that shows a static image and random circles.
+ * Place an image named `demo-map-placeholder.png` in your /public folder.
+ */
+function RiskMapDemo() {
+  // Hardcoded circles for demonstration. 
+  // x/y are in % (relative to the container), size is in px.
+  const randomCircles = [
+    { id: "c1", x: 25, y: 35, size: 60 },
+    { id: "c2", x: 60, y: 50, size: 50 },
+    { id: "c3", x: 45, y: 70, size: 40 },
+  ]
+
+  return (
+    <div className="relative w-full h-full">
+      {/* 1) Static map image */}
+      <Image
+        src="/demo-map-placeholder.png"
+        alt="Demo Risk Map"
+        fill
+        style={{ objectFit: "cover" }}
+        priority
+      />
+
+      {/* 2) Render random circles as semi-transparent overlays */}
+      {randomCircles.map((circle) => (
+        <div
+          key={circle.id}
+          className="absolute rounded-full bg-red-600 bg-opacity-30 border border-red-600"
+          style={{
+            width: `${circle.size}px`,
+            height: `${circle.size}px`,
+            left: `${circle.x}%`,
+            top: `${circle.y}%`,
+            transform: "translate(-50%, -50%)",
+          }}
+        />
+      ))}
+    </div>
+  )
+}

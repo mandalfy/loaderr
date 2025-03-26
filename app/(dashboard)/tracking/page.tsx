@@ -3,7 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Search, Filter } from "lucide-react"
-import { FleetMap } from "@/components/fleet-map"
+import { FleetMap, DemoMap } from "@/components/fleet-map"
 import { VehicleList } from "@/components/vehicle-list"
 
 export default function TrackingPage() {
@@ -11,7 +11,9 @@ export default function TrackingPage() {
     <div className="flex flex-col gap-4">
       <div>
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Fleet Tracking</h1>
-        <p className="text-muted-foreground">Monitor your vehicles in real-time and view delivery status</p>
+        <p className="text-muted-foreground">
+          Monitor your vehicles in real-time and view delivery status
+        </p>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -32,8 +34,10 @@ export default function TrackingPage() {
         <TabsList>
           <TabsTrigger value="map">Map View</TabsTrigger>
           <TabsTrigger value="list">List View</TabsTrigger>
+          <TabsTrigger value="demo">Demo</TabsTrigger>
         </TabsList>
 
+        {/* Real or placeholder map */}
         <TabsContent value="map">
           <Card>
             <CardHeader>
@@ -46,6 +50,7 @@ export default function TrackingPage() {
           </Card>
         </TabsContent>
 
+        {/* Vehicle list */}
         <TabsContent value="list">
           <Card>
             <CardHeader>
@@ -57,8 +62,20 @@ export default function TrackingPage() {
             </CardContent>
           </Card>
         </TabsContent>
+
+        {/* Demo map */}
+        <TabsContent value="demo">
+          <Card>
+            <CardHeader>
+              <CardTitle>Demo Map</CardTitle>
+              <CardDescription>A static map showing how driver selection works</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0 h-[600px]">
+              <DemoMap />
+            </CardContent>
+          </Card>
+        </TabsContent>
       </Tabs>
     </div>
   )
 }
-
