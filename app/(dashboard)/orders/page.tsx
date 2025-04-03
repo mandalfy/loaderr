@@ -1,3 +1,5 @@
+"use client"
+
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -6,6 +8,7 @@ import { Search, Filter, Route } from "lucide-react"
 import Link from "next/link"
 import { Badge } from "@/components/ui/badge"
 import { CreateOrderDialog } from "@/components/create-order-dialog"
+import { useEffect, useState } from "react"
 
 export default function OrdersPage() {
   return (
@@ -37,62 +40,94 @@ export default function OrdersPage() {
           </div>
         </CardHeader>
         <CardContent className="p-0 overflow-auto">
-          <div className="w-full min-w-[640px]">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Order ID</TableHead>
-                  <TableHead>From</TableHead>
-                  <TableHead>To</TableHead>
-                  <TableHead>Cargo Type</TableHead>
-                  <TableHead>Driver</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {orders.map((order) => (
-                  <TableRow key={order.id}>
-                    <TableCell className="font-medium">{order.id}</TableCell>
-                    <TableCell>{order.from}</TableCell>
-                    <TableCell>{order.to}</TableCell>
-                    <TableCell>{order.cargoType}</TableCell>
-                    <TableCell>{order.driver || "Unassigned"}</TableCell>
-                    <TableCell>
-                      <Badge
-                        variant={
-                          order.status === "Delivered"
-                            ? "outline"
-                            : order.status === "In Transit"
-                              ? "secondary"
-                              : order.status === "Pending"
-                                ? "default"
-                                : "destructive"
-                        }
-                      >
-                        {order.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" asChild>
-                        <Link href={`/routes?order=${order.id}`}>
-                          <Route className="h-4 w-4" />
-                          <span className="sr-only">Optimize Route</span>
-                        </Link>
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+          <OrdersTable />
         </CardContent>
       </Card>
     </div>
   )
 }
 
-const orders = [
+// Client component for orders table
+function OrdersTable() {
+  const [orders, setOrders] = useState([])
+
+  useEffect(() => {
+    // Load orders from localStorage
+    const storedOrders = JSON.parse(localStorage.getItem("orders") || "[]")
+
+    // If no stored orders, use default data
+    if (storedOrders.length === 0) {
+      setOrders(defaultOrders)
+    } else {
+      setOrders(storedOrders)
+    }
+
+    // Set up interval to check for updates
+    const interval = setInterval(() => {
+      const updatedOrders = JSON.parse(localStorage.getItem("orders") || "[]")
+      if (updatedOrders.length !== orders.length) {
+        setOrders(updatedOrders)
+      }
+    }, 2000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div className="w-full min-w-[640px]">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Order ID</TableHead>
+            <TableHead>From</TableHead>
+            <TableHead>To</TableHead>
+            <TableHead>Cargo Type</TableHead>
+            <TableHead>Driver</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {orders.map((order) => (
+            <TableRow key={order.id}>
+              <TableCell className="font-medium">{order.id}</TableCell>
+              <TableCell>{order.pickupLocation || order.from}</TableCell>
+              <TableCell>{order.deliveryLocation || order.to}</TableCell>
+              <TableCell>{order.cargoType}</TableCell>
+              <TableCell>{order.driver || "Unassigned"}</TableCell>
+              <TableCell>
+                <Badge
+                  variant={
+                    order.status === "Delivered"
+                      ? "outline"
+                      : order.status === "In Transit"
+                        ? "secondary"
+                        : order.status === "Pending"
+                          ? "default"
+                          : "destructive"
+                  }
+                >
+                  {order.status}
+                </Badge>
+              </TableCell>
+              <TableCell className="text-right">
+                <Button variant="ghost" size="icon" asChild>
+                  <Link href={`/routes?order=${order.id}`}>
+                    <Route className="h-4 w-4" />
+                    <span className="sr-only">Optimize Route</span>
+                  </Link>
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  )
+}
+
+// Default orders data for MVP
+const defaultOrders = [
   {
     id: "ORD-001",
     from: "Mumbai",
@@ -106,7 +141,7 @@ const orders = [
     from: "Delhi",
     to: "Jaipur",
     cargoType: "Furniture",
-    driver: "Amit Singh",
+    driver: "",
     status: "Pending",
   },
   {
@@ -122,7 +157,7 @@ const orders = [
     from: "Hyderabad",
     to: "Vijayawada",
     cargoType: "Machinery",
-    driver: "Suresh Reddy",
+    driver: "",
     status: "Delayed",
   },
   {
@@ -132,22 +167,6 @@ const orders = [
     cargoType: "Clothing",
     driver: "Ananya Das",
     status: "Delivered",
-  },
-  {
-    id: "ORD-006",
-    from: "Ahmedabad",
-    to: "Surat",
-    cargoType: "Electronics",
-    driver: "",
-    status: "Pending",
-  },
-  {
-    id: "ORD-007",
-    from: "Chennai",
-    to: "Coimbatore",
-    cargoType: "Machinery",
-    driver: "",
-    status: "Pending",
   },
 ]
 

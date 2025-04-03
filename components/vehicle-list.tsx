@@ -1,3 +1,5 @@
+"use client"
+
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -50,10 +52,24 @@ export function VehicleList() {
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
-                <Button variant="ghost" size="icon" title="View on map">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title="View on map"
+                  onClick={() => {
+                    window.location.href = `/tracking?vehicle=${vehicle.id}`
+                  }}
+                >
                   <MapPin className="h-4 w-4" />
                 </Button>
-                <Button variant="ghost" size="icon" title="View route">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  title="View route"
+                  onClick={() => {
+                    window.location.href = `/routes?vehicle=${vehicle.id}`
+                  }}
+                >
                   <Route className="h-4 w-4" />
                 </Button>
               </TableCell>
