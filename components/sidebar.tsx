@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { useSidebar } from "./sidebar-provider"
 import { useAuth } from "./auth-provider"
+import { ThemeToggle } from "./theme-toggle"
 
 import {
   BarChart3,
@@ -28,7 +29,7 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {}
 
 export function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname()
-  const { isOpen, setIsOpen } = useSidebar()
+  const { isOpen, toggle } = useSidebar()
   const { userRole, isDemoMode } = useAuth()
 
   // Define navigation items based on user role
@@ -118,7 +119,7 @@ export function Sidebar({ className }: SidebarProps) {
 
   return (
     <>
-      <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <Sheet open={isOpen} onOpenChange={toggle}>
         <SheetTrigger asChild>
           <Button variant="outline" size="icon" className="fixed left-4 top-4 z-40 lg:hidden">
             <Menu className="h-5 w-5" />
@@ -127,9 +128,9 @@ export function Sidebar({ className }: SidebarProps) {
         </SheetTrigger>
         <SheetContent side="left" className="p-0">
           <div className="flex flex-col h-full">
-            <div className="p-6 border-b">
+            <div className="p-6 border-b bg-primary text-primary-foreground">
               <h2 className="text-2xl font-bold">Loaderr</h2>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-primary-foreground/80">
                 {userRole === "admin" ? "Admin Dashboard" : "Driver Portal"}
               </p>
             </div>
@@ -140,7 +141,7 @@ export function Sidebar({ className }: SidebarProps) {
                     <Link
                       key={index}
                       href={item.href}
-                      onClick={() => setIsOpen(false)}
+                      onClick={() => toggle()}
                       className={cn(
                         "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
                         pathname.startsWith(item.href) ? "bg-accent text-accent-foreground" : "text-muted-foreground",
@@ -153,13 +154,16 @@ export function Sidebar({ className }: SidebarProps) {
                 </nav>
               </div>
             </ScrollArea>
-            <div className="p-4 border-t">
-              <Button variant="outline" className="w-full flex items-center justify-start" onClick={handleLogout}>
-                <LogOut className="h-5 w-5 mr-2" />
-                Logout
-              </Button>
+            <div className="p-4 border-t flex flex-col gap-2">
+              <div className="flex items-center justify-between mb-2">
+                <ThemeToggle />
+                <Button variant="outline" size="sm" onClick={handleLogout}>
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
+                </Button>
+              </div>
               {isDemoMode && (
-                <p className="text-xs text-muted-foreground mt-2 text-center">
+                <p className="text-xs text-muted-foreground text-center">
                   Demo Mode: {userRole === "admin" ? "Admin" : "Driver"}
                 </p>
               )}
@@ -170,9 +174,11 @@ export function Sidebar({ className }: SidebarProps) {
       <div
         className={cn("fixed inset-y-0 left-0 z-30 hidden w-72 border-r bg-background lg:flex lg:flex-col", className)}
       >
-        <div className="p-6 border-b">
-          <h2 className="text-2xl font-bold">LogiSafe</h2>
-          <p className="text-sm text-muted-foreground">{userRole === "admin" ? "Admin Dashboard" : "Driver Portal"}</p>
+        <div className="p-6 border-b bg-primary text-primary-foreground">
+          <h2 className="text-2xl font-bold">Loaderr</h2>
+          <p className="text-sm text-primary-foreground/80">
+            {userRole === "admin" ? "Admin Dashboard" : "Driver Portal"}
+          </p>
         </div>
         <ScrollArea className="flex-1">
           <div className="p-4">
@@ -194,12 +200,15 @@ export function Sidebar({ className }: SidebarProps) {
           </div>
         </ScrollArea>
         <div className="p-4 border-t">
-          <Button variant="outline" className="w-full flex items-center justify-start" onClick={handleLogout}>
-            <LogOut className="h-5 w-5 mr-2" />
-            Logout
-          </Button>
+          <div className="flex items-center justify-between mb-2">
+            <ThemeToggle />
+            <Button variant="outline" size="sm" onClick={handleLogout}>
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
           {isDemoMode && (
-            <p className="text-xs text-muted-foreground mt-2 text-center">
+            <p className="text-xs text-muted-foreground text-center">
               Demo Mode: {userRole === "admin" ? "Admin" : "Driver"}
             </p>
           )}

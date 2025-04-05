@@ -4,6 +4,7 @@ import { useSidebar } from "./sidebar-provider"
 import { Bell, Search, User, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { ThemeToggle } from "./theme-toggle"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -36,6 +37,8 @@ export function Header() {
             </div>
           </form>
         </div>
+
+        <ThemeToggle />
 
         <Button variant="ghost" size="icon" className="h-8 w-8">
           <Bell className="h-4 w-4" />

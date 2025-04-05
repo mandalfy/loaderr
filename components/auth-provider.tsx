@@ -5,7 +5,7 @@ import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 import { auth, db, isFirebaseConfigured } from "@/lib/firebase"
 import type { User } from "firebase/auth"
-import { doc, getDoc } from "firebase/firestore"
+import { doc, getDoc, setDoc } from "firebase/firestore"
 
 type UserRole = "admin" | "driver" | null
 
@@ -42,6 +42,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (userDoc.exists()) {
         return userDoc.data().role as UserRole
       }
+
+      // If user exists but has no role, set a default role and update Firestore
+      if (userId) {
+        const defaultRole = "driver"
+        await setDoc(doc(db, "users", userId), { role: defaultRole }, { merge: true })
+        return defaultRole
+      }
+
       return null
     } catch (error) {
       console.error("Error fetching user role:", error)

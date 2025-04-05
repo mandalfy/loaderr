@@ -44,6 +44,11 @@
  *       allow read: if request.auth != null;
  *       allow write: if request.auth != null && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
  *     }
+ *
+ *     // Allow users to create their own profile on first login
+ *     match /users/{userId} {
+ *       allow create: if request.auth != null && request.auth.uid == userId;
+ *     }
  *   }
  * }
  */

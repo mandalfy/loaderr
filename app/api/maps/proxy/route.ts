@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 
 // The API key provided by the user
-const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+const API_KEY = "AlzaSywHpvnIWhD15dSYpwZN6et-mT20KbFb6eT"
 
 export async function GET(request: Request) {
   try {

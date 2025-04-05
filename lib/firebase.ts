@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from "firebase/app"
 import { getFirestore } from "firebase/firestore"
-import { getAuth } from "firebase/auth"
+import { getAuth, GoogleAuthProvider } from "firebase/auth"
 import { getStorage } from "firebase/storage"
 
 // Firebase configuration
@@ -28,6 +28,7 @@ let app = null
 let auth = null
 let db = null
 let storage = null
+let googleProvider = null
 
 // Only initialize if we're in a browser environment
 if (typeof window !== "undefined") {
@@ -42,6 +43,12 @@ if (typeof window !== "undefined") {
       auth = getAuth(app)
       db = getFirestore(app)
       storage = getStorage(app)
+      googleProvider = new GoogleAuthProvider()
+
+      // Configure Google provider
+      googleProvider.setCustomParameters({
+        prompt: "select_account",
+      })
     } else {
       console.warn("Firebase configuration is incomplete. Using demo mode.")
     }
@@ -50,5 +57,5 @@ if (typeof window !== "undefined") {
   }
 }
 
-export { app, db, auth, storage }
+export { app, db, auth, storage, googleProvider }
 
